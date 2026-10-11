@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Tamil Buzzer CROSS PHONE</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800;900&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Outfit,sans-serif}
+body{background:#08080f;color:#fff;min-height:100vh}
+.bg{position:fixed;inset:0;z-index:-1;background:radial-gradient(ellipse at 20% 10%,#ff2040aa,transparent 50%),radial-gradient(ellipse at 80% 90%,#ffcc00aa,transparent 50%),#08080f}
+.card{background:rgba(255,255,255,.07);backdrop-filter:blur(24px);border:1px solid rgba(255,255,255,.12);border-radius:24px;padding:20px;margin-bottom:12px}
+.btn{border:0;border-radius:14px;padding:14px 20px;font-weight:800;cursor:pointer;font-size:16px;width:100%}
+.btn-y{background:#ffcc00;color:#111}
+.btn-g{background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);width:100%}
+input{width:100%;background:rgba(0,0,0,.4);border:1.5px solid rgba(255,255,255,.15);border-radius:14px;padding:14px;color:#fff;font-size:16px;outline:none;text-align:center}
+.page{display:none;max-width:480px;margin:0 auto;padding:18px;min-height:100vh;flex-direction:column;gap:12px}
+.page.active{display:flex}
+.code{font-size:36px;letter-spacing:8px;font-weight:900;text-align:center;padding:16px;background:rgba(0,0,0,.5);border-radius:18px;border:1.5px dashed #ffcc00;margin:10px 0}
+.pRow{display:flex;justify-content:space-between;padding:12px;border-radius:12px;background:rgba(255,255,255,.06);border-left:4px solid #ffcc00;margin:6px 0}
+.badge{padding:4px 10px;border-radius:99px;font-size:11px;background:rgba(255,204,0,.15);color:#ffcc00;border:1px solid rgba(255,204,0,.3)}
+.buz{width:190px;height:190px;border-radius:50%;border:0;background:radial-gradient(circle at 30% 30%,#ff5a5a,#ff2040);color:#fff;font-weight:900;font-size:30px;margin:20px auto;display:block;box-shadow:0 0 0 12px rgba(255,32,64,.15),0 20px 50px rgba(255,32,64,.5)}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+
+<div id="login" class="page active">
+<h1 style="text-align:center;padding:30px 0 10px;font-size:34px;font-weight:900">TAMIL<br><span style="color:#ffcc00">BUZZER</span><br><span style="font-size:14px;opacity:.6">Phone Cross Working!</span></h1>
+<div class="card"><input id="uName" placeholder="Username (Eg: Suziii)"><div style="height:10px"></div><button class="btn btn-y" onclick="login()">LOGIN</button><div style="margin-top:10px;font-size:11px;opacity:.6;text-align:center" id="cStatus">Connecting to Cloud...</div></div>
+</div>
+
+<div id="dash" class="page">
+<div class="card"><b id="dName"></b> <span class="badge" id="dPoints">0 ⭐</span><div style="height:10px"></div><button class="btn btn-y" onclick="create()">CREATE GROUP - Code Share Pannu!</button><div style="height:10px"></div><button class="btn btn-g" onclick="document.getElementById('jBox').style.display='block'">JOIN GROUP</button></div>
+<div class="card" id="jBox" style="display:none"><p style="font-size:13px;margin-bottom:8px">6-digit Code Enter Pannu:</p><div style="display:flex;gap:8px"><input id="jCode" maxlength="6" placeholder="000000" style="letter-spacing:6px;font-weight:800"><button class="btn btn-y" style="width:80px" onclick="join()">JOIN</button></div></div>
+<div style="font-size:11px;opacity:.5;text-align:center">Tip: Host phone la CREATE pannitu, code ah friends ku share pannu da!</div>
+</div>
+
+<div id="wait" class="page">
+<div class="card" style="text-align:center"><p style="font-size:11px;opacity:.6">CODE - Share Pannu da!</p><div class="code" id="rCode">------</div><button class="btn btn-g" style="font-size:12px;padding:8px" onclick="navigator.clipboard.writeText(document.getElementById('rCode').innerText);alert('Copied da!')">Copy Code</button><div style="height:12px"></div><div style="text-align:left"><b>Players (<span id="pCount">0</span>)</b><div id="pList"></div></div><div style="height:12px"></div><button id="sBtn" class="btn btn-y" onclick="startG()">START THE GAME</button><div style="height:8px"></div><button class="btn btn-g" onclick="leave()">LEAVE</button><div style="font-size:11px;opacity:.5;margin-top:8px" id="sync">Syncing...</div></div>
+</div>
+
+<div id="game" class="page">
+<div style="display:flex;justify-content:space-between"><span class="badge" id="qN">Q1/15</span><span style="font-weight:900;color:#ffcc00" id="tim">25s</span></div>
+<div class="card" style="text-align:center;min-height:100px;display:flex;align-items:center;justify-content:center" id="qT">Loading...</div>
+<button class="buz" id="buzBtn" onclick="buzz()">BUZZ</button>
+<div style="text-align:center;font-weight:700;min-height:24px" id="bInfo"></div>
+<div class="card" id="tBox" style="display:none"><p style="font-size:12px;opacity:.7"><span id="tName"></span> - Movie Name Type Pannu:</p><div style="display:flex;gap:8px;margin-top:8px"><input id="aInp" placeholder="Eg: Baasha"><button class="btn btn-y" style="width:70px" onclick="subAns()">OK</button></div></div>
+<div class="card" id="resBox" style="display:none;text-align:center"><img id="pImg" style="width:100%;border-radius:16px;aspect-ratio:3/4;object-fit:cover"><h3 id="pName" style="margin-top:10px"></h3><p id="pRes"></p><button class="btn btn-y" style="margin-top:10px" onclick="nextQ()">Next →</button></div>
+</div>
+
+<div id="end" class="page">
+<div class="card" style="text-align:center"><h1 id="wName">WINNER</h1><p id="wSub"></p></div>
+<div class="card"><h3>Leaderboard</h3><div id="lBoard"></div></div>
+<button class="btn btn-y" onclick="location.reload()">PLAY AGAIN - Go Home</button>
+</div>
+
+<script>
+const MOVIES=[{n:"Baasha",y:1995,c:"Manikam... Auto driver... Thalaivar style!",p:"https://upload.wikimedia.org/wikipedia/en/4/4a/Baashaa_poster.jpg"},{n:"Muthu",y:1995,c:"Maharaja velai... Japan la super hit!",p:"https://upload.wikimedia.org/wikipedia/en/f/f4/Muthu_poster.jpg"},{n:"Kadhalan",y:1994,c:"Dancer... Bomb... A.R Rahman hit!",p:"https://upload.wikimedia.org/wikipedia/en/0/09/Kadhalan_poster.jpg"},{n:"Indian",y:1996,c:"Periya thatha... Varma kalai... Lancham!",p:"https://upload.wikimedia.org/wikipedia/en/f/f6/Indian_1996_poster.jpg"},{n:"Padayappa",y:1999,c:"Neelambari... En vazhi thani vazhi!",p:"https://upload.wikimedia.org/wikipedia/en/4/47/Padayappa_poster.jpg"},{n:"Alaipayuthey",y:2000,c:"Train la love... Sakthi kora!",p:"https://upload.wikimedia.org/wikipedia/en/3/3d/Alaipayuthey_poster.jpg"},{n:"Minnale",y:2001,c:"Vaseegara... Madhavan!",p:"https://upload.wikimedia.org/wikipedia/en/d/d3/Minnale_poster.jpg"},{n:"Kaakha Kaakha",y:2003,c:"Police... Encounter... Surya!",p:"https://upload.wikimedia.org/wikipedia/en/c/c3/Kaakha_Kaakha_poster.jpg"},{n:"Sivaji",y:2007,c:"Black money... Style... Athiradi!",p:"https://upload.wikimedia.org/wikipedia/en/0/01/Sivaji_poster.jpg"},{n:"Ghilli",y:2004,c:"Kabadi... Muthupandi... Vijay!",p:"https://upload.wikimedia.org/wikipedia/en/3/35/Ghilli_poster.jpg"},{n:"Thullatha Manamum Thullum",y:1999,c:"Blind ponnu... Singer... Vijay!",p:"https://upload.wikimedia.org/wikipedia/en/7/77/Thullatha_Manamum_Thullum_poster.jpg"},{n:"Run",y:2002,c:"Chennai vandha payyan... Rowdy sister!",p:"https://upload.wikimedia.org/wikipedia/en/3/3f/Run_2002_film.jpg"},{n:"Dhool",y:2003,c:"Village water problem... Vikram!",p:"https://upload.wikimedia.org/wikipedia/en/3/3d/Dhool_poster.jpg"},{n:"Saamy",y:2003,c:"Tirunelveli police... Aarusaamy!",p:"https://upload.wikimedia.org/wikipedia/en/3/3c/Saamy_poster.jpg"},{n:"Polladhavan",y:2007,c:"Bike tholaichathu... Dhanush!",p:"https://upload.wikimedia.org/wikipedia/en/3/32/Polladhavan_poster.jpg"}];
+
+// === CLOUD USING JSONBLOB - FREE NO SETUP ===
+const BLOB_API="https://jsonblob.com/api/jsonBlob";
+let BLOB_ID=localStorage.getItem('tamil_blob_id')||"1385830394777604096"; // public shared blob
+
+async function loadCloud(){
+try{
+let r=await fetch(`https://jsonblob.com/api/jsonBlob/${BLOB_ID}`);
+if(!r.ok) throw 0;
+let j=await r.json();
+document.getElementById('cStatus').innerText="☁️ Cloud Connected - Phone Cross OK!";
+return j;
+}catch(e){
+try{
+let r=await fetch(BLOB_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({rooms:{}})});
+let loc=r.headers.get('Location')||r.headers.get('location');
+if(loc){BLOB_ID=loc.split('/').pop();localStorage.setItem('tamil_blob_id',BLOB_ID);}
+return {rooms:{}};
+}catch(e2){return {rooms:{}};}
+}
+}
+async function saveCloud(data){
+try{
+await fetch(`https://jsonblob.com/api/jsonBlob/${BLOB_ID}`,{method:'PUT',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+document.getElementById('sync')&&(document.getElementById('sync').innerText="✅ Cloud Saved - Friends can join!");
+}catch(e){}
+}
+
+let S={user:null,code:null,isHost:false,players:[],scores:{},qList:[],qI:0,time:25,tInt:null,locked:false,buzz:null};
+
+function show(id){document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function login(){let u=document.getElementById('uName').value.trim();if(!u){alert('Username podu da!');return}S.user=u;localStorage.setItem('tb_user',u);document.getElementById('dName').innerText=u;show('dash');loadCloud().then(d=>{document.getElementById('cStatus').innerText="☁️ Cloud Ready!"});}
+async function create(){
+let code=Math.floor(100000+Math.random()*900000).toString();
+document.getElementById('cStatus').innerText="Creating...";
+let data=await loadCloud();
+data.rooms=data.rooms||{};
+data.rooms[code]={players:[S.user],scores:{[S.user]:0},host:S.user,created:Date.now()};
+await saveCloud(data);
+S.code=code;S.isHost=true;S.players=[S.user];S.scores={[S.user]:0};
+document.getElementById('rCode').innerText=code;document.getElementById('sBtn').style.display='block';
+renderP();show('wait');loop();
+}
+async function join(){
+let code=document.getElementById('jCode').value.trim();
+if(code.length!=6){alert('6 digit podu da');return}
+let data=await loadCloud();
+if(!data.rooms||!data.rooms[code]){alert('Code thappu da! Group illa! Host phone la CREATE panni antha code inga podu da!\\n\\nHost code: '+Object.keys(data.rooms||{}).slice(-3).join(', '));return}
+let room=data.rooms[code];
+if(!room.players.includes(S.user)){room.players.push(S.user);room.scores[S.user]=0;await saveCloud(data);}
+S.code=code;S.isHost=false;S.players=room.players;S.scores=room.scores;
+document.getElementById('rCode').innerText=code;document.getElementById('sBtn').style.display='none';
+renderP();show('wait');loop();
+}
+function renderP(){document.getElementById('pList').innerHTML=S.players.map(p=>`<div class="pRow"><span>👤 ${p} ${p==S.players[0]?'👑':''}</span><span>${S.scores[p]||0} ⭐</span></div>`).join('');document.getElementById('pCount').innerText=S.players.length;}
+let L=null;
+function loop(){if(L)clearInterval(L);L=setInterval(async()=>{if(!S.code)return;let d=await loadCloud();let r=d.rooms&&d.rooms[S.code];if(r){S.players=r.players;S.scores=r.scores;renderP();if(r.game&&!S.isHost&&r.game.qI!=S.qI){S.qList=r.game.qList;S.qI=r.game.qI;loadQ();}}},2500);}
+function leave(){S.code=null;if(L)clearInterval(L);show('dash');}
+
+async function startG(){S.qList=[...MOVIES].sort(()=>0.5-Math.random()).slice(0,15);S.qI=0;S.scores={};S.players.forEach(p=>S.scores[p]=0);let d=await loadCloud();d.rooms[S.code].scores=S.scores;d.rooms[S.code].game={qList:S.qList,qI:0};await saveCloud(d);loadQ();show('game');}
+function loadQ(){
+if(S.qI>=15){end();return}
+let q=S.qList[S.qI];
+document.getElementById('qN').innerText=`Q ${S.qI+1}/15`;
+document.getElementById('qT').innerText=q.c+" ("+q.y+")";
+document.getElementById('bInfo').innerText="";document.getElementById('tBox').style.display='none';document.getElementById('resBox').style.display='none';
+document.getElementById('buzBtn').style.opacity='1';document.getElementById('buzBtn').innerText='BUZZ';S.locked=false;S.buzz=null;S.time=25;clearInterval(S.tInt);
+document.getElementById('tim').innerText=S.time+'s';
+S.tInt=setInterval(()=>{S.time--;document.getElementById('tim').innerText=S.time+'s';if(S.time<=0){clearInterval(S.tInt);showRes(false,true)}},1000);
+}
+function buzz(){if(S.locked)return;S.locked=true;S.buzz=S.user;document.getElementById('buzBtn').style.opacity='0.3';document.getElementById('bInfo').innerText=S.user+' Buzzed! 🔥';document.getElementById('tBox').style.display='block';document.getElementById('tName').innerText=S.user;clearInterval(S.tInt);}
+async function subAns(){
+let a=document.getElementById('aInp').value.trim().toLowerCase();
+let cor=S.qList[S.qI].n.toLowerCase();
+let ok=cor.includes(a)||a.includes(cor);
+if(ok){S.scores[S.buzz]=(S.scores[S.buzz]||0)+1;let d=await loadCloud();if(d.rooms&&d.rooms[S.code]){d.rooms[S.code].scores=S.scores;await saveCloud(d);}showRes(true,false);}
+else{document.getElementById('bInfo').innerText='Thappu da ❌';document.getElementById('tBox').style.display='none';S.locked=false;document.getElementById('buzBtn').style.opacity='1';S.time=10;S.tInt=setInterval(()=>{S.time--;document.getElementById('tim').innerText=S.time+'s';if(S.time<=0){clearInterval(S.tInt);showRes(false,true)}},1000);}
+}
+function showRes(ok,timeout){
+document.getElementById('tBox').style.display='none';let b=document.getElementById('resBox');b.style.display='block';
+document.getElementById('pImg').src=S.qList[S.qI].p;document.getElementById('pName').innerText=S.qList[S.qI].n+' ('+S.qList[S.qI].y+')';
+document.getElementById('pRes').innerText=timeout?'Time over!':ok?'⭐ Correct! +1':'Thappu!';
+}
+async function nextQ(){S.qI++;if(S.isHost){let d=await loadCloud();if(d.rooms&&d.rooms[S.code]&&d.rooms[S.code].game){d.rooms[S.code].game.qI=S.qI;await saveCloud(d);}}loadQ();}
+function end(){clearInterval(S.tInt);let sorted=Object.entries(S.scores).sort((a,b)=>b[1]-a[1]);document.getElementById('wName').innerText=sorted[0]?sorted[0][0]:'Draw';document.getElementById('wSub').innerText=(sorted[0]?sorted[0][1]:0)+' Stars';document.getElementById('lBoard').innerHTML=sorted.map((x,i)=>`<div class="pRow"><span>${i==0?'🏆':i+1+'.'} ${x[0]}</span><span>${x[1]} ⭐</span></div>`).join('');show('end');}
+window.onload=()=>{let u=localStorage.getItem('tb_user');if(u){document.getElementById('uName').value=u;}}
+</script>
+</body>
+</html>
